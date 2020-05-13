@@ -165,6 +165,7 @@ if [ ! -f /var/lib/kerberos/krb5kdc/ldap.creds ]; then
     dns_canonicalize_hostname = false
     rdns = false
     default_realm = ${REALM_NAME}
+    default_ccache_name = FILE:/tmp/krb5cc_%{uid}
 [realms]
     ${REALM_NAME} = {
             kdc = localhost
