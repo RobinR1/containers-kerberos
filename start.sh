@@ -69,7 +69,7 @@ ldap_create_person() {
 dn: $dn_prefix,$suffix
 objectClass: person
 objectClass: top
-sn: $cnsn)
+sn: $cnsn
 EOL
     status=$?
     if [ $status -ne 0 ] && [ $status -ne 68 ]; then 
