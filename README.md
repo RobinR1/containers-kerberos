@@ -13,9 +13,10 @@ the Kerberos configuration both localy as remotely on the LDAP server.
 This will require you to set all necessary [environment variables](#environment-variables).
 
 ## Starting container
-Start the container as follows:
+Start the container as follows when it is already initialized:
 ```bash
 podman run -v krb5kdb_data:/var/lib/kerberos/krb5kdc \
+    -p 88:88 -p 749:749
     --healthcheck-command '/usr/bin/start.sh healthcheck' \
     --name some-krb5kdc sicho/kerberos:latest
 ```
@@ -69,7 +70,19 @@ Admin account to create. Don't include the directory suffix. Defaults to `cn=krb
 Admin account password. Required for bootstrap.
 ### `CONTAINER_DN`
 KDC container DN. Don't include the directory suffix. Defaults to `cn=kdc`
+### `DESTROY_AND_RECREATE`
+When set to `true`, the bootstrap script will try to first remove the Kerberos realm
+configuration from the LDAP server. Use this if the realm was already initialized before
+but you have lost or want to re-initialize the data volume. (This variable also only
+has effect when the bootstrapping occurs, and that happens only when the data volume is
+empty)
 
 ## Volumes
 ### `/var/lib/kerberos/krb5kdc`
 Volume containing all Kerberos configuration and data
+
+## Exposed Ports
+### `Port 88`
+The KDC daemon listens here
+### `Port 749`
+The Kadmin server daemon listens here
