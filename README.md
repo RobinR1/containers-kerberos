@@ -31,7 +31,15 @@ podman generate systemd --name some-krb5kdc > /etc/systemd/system/container-some
 systemctl daemon-reload
 systemctl enable container-some-krb5kdc.service
 ```
-
+If you are running your directory server also on this host, make sure kerberos is started after
+the directory server is started. For example:
+```bash
+systemctl edit container-some-krb5kdc.service
+```
+```ini
+[Unit]
+After=container-some-dirsrv.service
+```
 ## Container shell access
 You can gain shell access using:
 ```bash
