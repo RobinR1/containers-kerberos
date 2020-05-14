@@ -25,7 +25,9 @@ if [ "$(ls -A /etc/pki/trust/anchors)" ]; then
     /usr/sbin/update-ca-certificates -v
 fi
 
-
+[[ ${LDAP_HOST} ]] || { echo "LDAP_HOST variable not set. Did you forget to run with '-e LDAP_HOST=hostname' parameter?"; exit 1; }
+LDAP_PORT=${LDAP_PORT:-636}
+ldap_url=ldaps://${LDAP_HOST}:${LDAP_PORT}
 
 # usage: file_env VAR [DEFAULT]
 # as example: file_env 'MYSQL_PASSWORD' 'zabbix'
@@ -144,7 +146,6 @@ if [ ! -f /var/lib/kerberos/krb5kdc/ldap.creds ]; then
     DM_DN=${DM_DN:-cn=Directory Manager}
     file_env DM_PASS
 
-    ldap_url=ldaps://${LDAP_HOST}:${LDAP_PORT:-636}
     kdc_dn=${KDC_DN_PREFIX},${DIR_SUFFIX}
     admin_dn=${ADMIN_DN_PREFIX},${DIR_SUFFIX}
 
@@ -229,12 +230,18 @@ echo "Symlink /var/lib/kerberos/krb5kdc/krb5.conf -> /etc/krb5.conf"
 rm -f /etc/krb5.conf
 ln -s /var/lib/kerberos/krb5kdc/krb5.conf /etc/krb5.conf
 
+echo "Checking if LDAP server is reachable..."
+retries=0
+until [ $retries -eq 5 ] || /usr/bin/ldapsearch -H $ldap_url -x -b '' -LLL -s base vendorVersion; do
+    sleep $(( retries++ ))
+done
+[ $retries -ge 5 ] && { echo "ERROR: Failed connecting to $ldap_url."; exit 1; }
+
 # Start Kerberos services
 echo "Starting kadmin..."
 /usr/lib/mit/sbin/kadmind -P /var/run/kadmind.pid 
 echo "Starting krb5kdc..."
 /usr/lib/mit/sbin/krb5kdc -P /var/run/krb5kdc.pid
-
 
 # Show kdc logging as output. Tail will exit when receiving SIGTERM.
 tail -f /var/log/krb5/krb5kdc.log &

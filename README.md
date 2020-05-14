@@ -47,43 +47,43 @@ podman exec -ti some-krb5kdc /bin/bash
 ```
 
 ## Environment variables
+### `LDAP_HOST`
+FQDN Hostname of the LDAP server. **Required**
+### `LDAP_PORT`
+Port where the Secure LDAP server (ldaps://) is listening on. Defaults to `636`
+
+### Bootstrap variables
 When you first start the `kerberos` image, it will configure Kerberos and initialize the LDAP server
 for use with Kerberos using the environment variables described here. All configuration is saved on
 the volume `/var/lib/kerberos/krb5kdc` so if this volume is persistent, bootstrap won't be triggered
 anymore and you no longer have to pass these variables to the `podman run` command anymore as they
 are then no longer used.
 
-### `REALM_NAME`
+#### `REALM_NAME`
 This variable sets the realm name of the Kerberos domain you want to host. Defaults to `EXAMPLE.COM`
-### `LDAP_HOST`
-FQDN Hostname of the LDAP server
-### `LDAP_PORT`
-Port where the Secure LDAP server (ldaps://) is listening on. Defaults to `636`
-### `DIR_SUFFIX`
+#### `DIR_SUFFIX`
 Directory suffix. Defaults to `dc=example,dc=com`
-### `DM_DN`
+#### `DM_DN`
 Directory Manager account to use for initialization of LDAP. Don't include the directory suffix.
 Defaults to 'cn=Directory Manager'
-### `DM_PASS`
+#### `DM_PASS`
 Directory Manager password. Required for bootstrap.
-### `MASTER_PASS`
+#### `MASTER_PASS`
 Kerberos database master password. Required for bootstrap
-### `KDC_DN_PREFIX`
+#### `KDC_DN_PREFIX`
 KDC account to create. Don't include the directory suffix. Defaults to `cn=krbkdc`
-### `KDC_PASS`
+#### `KDC_PASS`
 KDC account password. Required for bootstrap.
-### `ADMIN_DN_PREFIX`
+#### `ADMIN_DN_PREFIX`
 Admin account to create. Don't include the directory suffix. Defaults to `cn=krbadm`
-### `ADMIN_PASS`
+#### `ADMIN_PASS`
 Admin account password. Required for bootstrap.
-### `CONTAINER_DN`
+#### `CONTAINER_DN`
 KDC container DN. Don't include the directory suffix. Defaults to `cn=kdc`
-### `DESTROY_AND_RECREATE`
+#### `DESTROY_AND_RECREATE`
 When set to `true`, the bootstrap script will try to first remove the Kerberos realm
-configuration from the LDAP server. Use this if the realm was already initialized before
-but you have lost or want to re-initialize the data volume. (This variable also only
-has effect when the bootstrapping occurs, and that happens only when the data volume is
-empty)
+configuration from the LDAP server before adding it. Use this if the realm was already 
+initialized before but you have lost or want to re-initialize the data volume.
 
 ## Volumes
 ### `/var/lib/kerberos/krb5kdc`
