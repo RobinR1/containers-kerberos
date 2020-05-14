@@ -4,7 +4,7 @@ MAINTAINER Robin Roevens <robin.roevens@disroot.org>
 RUN zypper ref && \
     # Work around https://github.com/openSUSE/obs-build/issues/487 \
     zypper install -y openSUSE-release-appliance-docker && \
-    zypper -n in krb5-client krb5-server krb5-plugin-kdb-ldap openldap2-client && \
+    zypper -n in krb5-client krb5-server krb5-plugin-kdb-ldap openldap2-client cyrus-sasl-gssapi && \
     zypper clean -a 
 
 COPY [ "start.sh", "/usr/bin/" ]
