@@ -1,3 +1,7 @@
+#!BuildTag: kerberos
+#
+# podman pull registry.opensuse.org/home/RobinR1/containers/kerberos:latest
+#
 FROM opensuse/tumbleweed
 MAINTAINER Robin Roevens <robin.roevens@disroot.org>
 
